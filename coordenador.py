@@ -11,7 +11,7 @@ class Coordenador(Pessoa):
 
         super().__init__(nome, idade, email)
         self.area_responsavel = area_responsavel
-
+## testando
 
     @property
     def area_responsavel(self):
