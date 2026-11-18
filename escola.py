@@ -1,77 +1,94 @@
-
-from aluno import Aluno
-from professor import Professor
-from coordenador import Coordenador
+"""Módulo com a classe Coordenador do sistema da escola de cursos."""
 
 
+from pessoa import Pessoa
 
-class Escola:
-    """Classe responsável por gerenciar as pessoas da escola."""
 
-    def __init__(self):
-        """Inicializa as listas de pessoas da escola."""
-        self.__alunos = []
-        self.__professores = []
-        self.__coordenadores = []
 
-    # Cadastro de pessoas
-    def cadastrar_aluno(self, aluno):
-        """Adiciona um aluno à lista."""
-        self.__alunos.append(aluno)
-        print("Aluno cadastrado com sucesso!")
 
-    def cadastrar_professor(self, professor):
-        """Adiciona um professor à lista."""
-        self.__professores.append(professor)
-        print("Professor cadastrado com sucesso!")
+class Coordenador(Pessoa):
+    """Representa um coordenador da escola, que herda de Pessoa.
 
-    def cadastrar_coordenador(self, coordenador):
-        """Adiciona um coordenador à lista."""
-        self.__coordenadores.append(coordenador)
-        print("Coordenador cadastrado com sucesso!")
 
-    # Listagem de pessoas
-    def listar_pessoas(self):
-        """Exibe todos os alunos, professores e coordenadores."""
+    Atributos próprios: área coordenada e lista de turmas aprovadas.
+    """
 
-        print("\n--- ALUNOS ---")
-        for aluno in self.__alunos:
-            print(aluno)
 
-        print("\n--- PROFESSORES ---")
-        for professor in self.__professores:
-            print(professor)
+    def __init__(self, nome, idade, cpf, area_coordenada):
+        """Cria um coordenador.
 
-        print("\n--- COORDENADORES ---")
-        for coordenador in self.__coordenadores:
-            print(coordenador)
 
-    # Busca de pessoas
-    def buscar_pessoa(self, nome):
-        """Busca uma pessoa pelo nome."""
+        Args:
+            nome (str): nome completo do coordenador.
+            idade (int): idade em anos.
+            cpf (str): CPF do coordenador.
+            area_coordenada (str): área que ele coordena (não pode ser vazia).
+        """
+        super().__init__(nome, idade, cpf)
+        self.area_coordenada = area_coordenada
+        self.__turmas_aprovadas = []
 
-        pessoas = (
-            self.__alunos
-            + self.__professores
-            + self.__coordenadores
-        )
 
-        for pessoa in pessoas:
-            if pessoa.nome.lower() == nome.lower():
-                return pessoa
+    @property
+    def area_coordenada(self):
+        """Retorna a área coordenada."""
+        return self.__area_coordenada
 
-        return None
 
-    # Polimorfismo
-    def executar_funcoes(self):
-        """Executa a função de cada pessoa usando polimorfismo."""
+    @area_coordenada.setter
+    def area_coordenada(self, valor):
+        """Define a área coordenada.
 
-        pessoas = (
-            self.__alunos
-            + self.__professores
-            + self.__coordenadores
-        )
 
-        for pessoa in pessoas:
-            print(pessoa.apresentar_funcao())
+        Raises:
+            ValueError: se a área for vazia.
+        """
+        if not isinstance(valor, str) or not valor.strip():
+            raise ValueError("A área coordenada não pode ser vazia.")
+        self.__area_coordenada = valor.strip()
+
+
+    @property
+    def turmas_aprovadas(self):
+        """Retorna uma cópia da lista de turmas aprovadas."""
+        return list(self.__turmas_aprovadas)
+
+
+    def aprovar_turma(self, turma):
+        """Aprova a abertura de uma turma.
+
+
+        Args:
+            turma (str): nome da turma (não pode ser vazio).
+
+
+        Returns:
+            str: mensagem confirmando a aprovação.
+
+
+        Raises:
+            ValueError: se o nome da turma for vazio.
+        """
+        if not isinstance(turma, str) or not turma.strip():
+            raise ValueError("O nome da turma não pode ser vazio.")
+        turma = turma.strip()
+        if turma not in self.__turmas_aprovadas:
+            self.__turmas_aprovadas.append(turma)
+        return f"Turma {turma} aprovada pelo coordenador {self.nome}."
+
+
+    def apresentar_se(self):
+        """Apresenta o coordenador (sobrescreve o método de Pessoa)."""
+        return (f"Olá, eu sou {self.nome}, coordenador(a) da área de "
+                f"{self.area_coordenada}.")
+
+
+    def __str__(self):
+        """Retorna os dados do coordenador em formato legível."""
+        turmas = ", ".join(self.__turmas_aprovadas) if self.__turmas_aprovadas else "nenhuma"
+        return (f"[Coordenador] {super().__str__()} | Área: "
+                f"{self.area_coordenada} | Turmas aprovadas: {turmas}")
+
+
+
 
