@@ -26,7 +26,7 @@ class Coordenador(Pessoa):
             raise ValueError("A área responsável não pode ficar vazia.")
         self.__area_responsavel = nova_area.strip()
 
-
+## teste dois
     def organizar_cursos(self):
 
         return (
