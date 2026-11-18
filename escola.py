@@ -1,4 +1,4 @@
-"""Módulo com a classe Coordenador do sistema da escola de cursos."""
+"""Módulo com a classe gerenciadora Escola do sistema da escola de cursos."""
 
 
 from pessoa import Pessoa
@@ -6,89 +6,119 @@ from pessoa import Pessoa
 
 
 
-class Coordenador(Pessoa):
-    """Representa um coordenador da escola, que herda de Pessoa.
+class Escola:
+    """Gerencia a lista de pessoas (alunos, professores e coordenadores) da escola."""
 
 
-    Atributos próprios: área coordenada e lista de turmas aprovadas.
-    """
-
-
-    def __init__(self, nome, idade, cpf, area_coordenada):
-        """Cria um coordenador.
+    def __init__(self, nome):
+        """Cria uma escola com a lista de pessoas vazia.
 
 
         Args:
-            nome (str): nome completo do coordenador.
-            idade (int): idade em anos.
-            cpf (str): CPF do coordenador.
-            area_coordenada (str): área que ele coordena (não pode ser vazia).
+            nome (str): nome da escola (não pode ser vazio).
         """
-        super().__init__(nome, idade, cpf)
-        self.area_coordenada = area_coordenada
-        self.__turmas_aprovadas = []
+        self.nome = nome
+        self.__pessoas = []
 
 
     @property
-    def area_coordenada(self):
-        """Retorna a área coordenada."""
-        return self.__area_coordenada
+    def nome(self):
+        """Retorna o nome da escola."""
+        return self.__nome
 
 
-    @area_coordenada.setter
-    def area_coordenada(self, valor):
-        """Define a área coordenada.
+    @nome.setter
+    def nome(self, valor):
+        """Define o nome da escola.
 
 
         Raises:
-            ValueError: se a área for vazia.
+            ValueError: se o nome for vazio.
         """
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("A área coordenada não pode ser vazia.")
-        self.__area_coordenada = valor.strip()
+            raise ValueError("O nome da escola não pode ser vazio.")
+        self.__nome = valor.strip()
 
 
     @property
-    def turmas_aprovadas(self):
-        """Retorna uma cópia da lista de turmas aprovadas."""
-        return list(self.__turmas_aprovadas)
+    def pessoas(self):
+        """Retorna uma cópia da lista de pessoas cadastradas."""
+        return list(self.__pessoas)
 
 
-    def aprovar_turma(self, turma):
-        """Aprova a abertura de uma turma.
+    def cadastrar(self, pessoa):
+        """Cadastra uma pessoa na escola.
 
 
         Args:
-            turma (str): nome da turma (não pode ser vazio).
+            pessoa (Pessoa): objeto Pessoa, Aluno, Professor ou Coordenador.
+
+
+        Raises:
+            TypeError: se o objeto não for uma Pessoa.
+            ValueError: se já existir uma pessoa cadastrada com o mesmo CPF.
+        """
+        if not isinstance(pessoa, Pessoa):
+            raise TypeError("Só é possível cadastrar objetos do tipo Pessoa.")
+        if self.buscar_por_cpf(pessoa.cpf) is not None:
+            raise ValueError("Já existe uma pessoa cadastrada com este CPF.")
+        self.__pessoas.append(pessoa)
+
+
+    def listar(self):
+        """Retorna a lista de todas as pessoas cadastradas."""
+        return list(self.__pessoas)
+
+
+    def buscar_por_nome(self, termo):
+        """Busca pessoas cujo nome contenha o termo informado.
+
+
+        Args:
+            termo (str): parte do nome (não diferencia maiúsculas de minúsculas).
 
 
         Returns:
-            str: mensagem confirmando a aprovação.
-
-
-        Raises:
-            ValueError: se o nome da turma for vazio.
+            list: pessoas encontradas (lista vazia se não houver nenhuma).
         """
-        if not isinstance(turma, str) or not turma.strip():
-            raise ValueError("O nome da turma não pode ser vazio.")
-        turma = turma.strip()
-        if turma not in self.__turmas_aprovadas:
-            self.__turmas_aprovadas.append(turma)
-        return f"Turma {turma} aprovada pelo coordenador {self.nome}."
+        termo = termo.strip().lower()
+        return [p for p in self.__pessoas if termo in p.nome.lower()]
 
 
-    def apresentar_se(self):
-        """Apresenta o coordenador (sobrescreve o método de Pessoa)."""
-        return (f"Olá, eu sou {self.nome}, coordenador(a) da área de "
-                f"{self.area_coordenada}.")
+    def buscar_por_cpf(self, cpf):
+        """Busca uma pessoa pelo CPF.
+
+
+        Args:
+            cpf (str): CPF da pessoa.
+
+
+        Returns:
+            Pessoa | None: a pessoa encontrada ou None se não existir.
+        """
+        cpf = cpf.strip()
+        for pessoa in self.__pessoas:
+            if pessoa.cpf == cpf:
+                return pessoa
+        return None
+
+
+    def executar_apresentacao_geral(self):
+        """Executa a ação polimórfica: chama apresentar_se() de cada pessoa.
+
+
+        Cada objeto (Aluno, Professor ou Coordenador) responde de um jeito.
+
+
+        Returns:
+            list: lista com a apresentação de cada pessoa cadastrada.
+        """
+        return [pessoa.apresentar_se() for pessoa in self.__pessoas]
 
 
     def __str__(self):
-        """Retorna os dados do coordenador em formato legível."""
-        turmas = ", ".join(self.__turmas_aprovadas) if self.__turmas_aprovadas else "nenhuma"
-        return (f"[Coordenador] {super().__str__()} | Área: "
-                f"{self.area_coordenada} | Turmas aprovadas: {turmas}")
-
+        """Retorna um resumo da escola em formato legível."""
+        return f"Escola: {self.nome} | Pessoas cadastradas: {len(self.__pessoas)}"
 
 
 
