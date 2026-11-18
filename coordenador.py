@@ -7,57 +7,45 @@ class Coordenador(Pessoa):
 
 
 
-    def __init__(self, nome, idade, email, setor, tempo_experiencia):
+    def __init__(self, nome, idade, email, area_responsavel):
 
         super().__init__(nome, idade, email)
-        self.__setor = setor
-        self.__tempo_experiencia = tempo_experiencia
+        self.area_responsavel = area_responsavel
 
 
-    # Getter e Setter do setor
     @property
-    def setor(self):
+    def area_responsavel(self):
 
-        return self.__setor
-
-
-    @setor.setter
-    def setor(self, novo_setor):
-
-        if novo_setor.strip() == "":
-            raise ValueError("O setor não pode ficar vazio.")
-        self.__setor = novo_setor
+        return self.__area_responsavel
 
 
-    # Getter e Setter do tempo de experiência
-    @property
-    def tempo_experiencia(self):
+    @area_responsavel.setter
+    def area_responsavel(self, nova_area):
 
-        return self.__tempo_experiencia
-
-
-    @tempo_experiencia.setter
-    def tempo_experiencia(self, novo_tempo):
-
-        if novo_tempo < 0:
-            raise ValueError("O tempo não pode ser negativo.")
-        self.__tempo_experiencia = novo_tempo
+        if not isinstance(nova_area, str) or not nova_area.strip():
+            raise ValueError("A área responsável não pode ficar vazia.")
+        self.__area_responsavel = nova_area.strip()
 
 
-    def apresentar_funcao(self):
+    def organizar_cursos(self):
 
-        return "Coordena as atividades da escola."
+        return (
+            f"{self.nome} está organizando os cursos "
+            f"da área de {self.area_responsavel}."
+        )
 
 
-    def organizar_escola(self):
+    def apresentar(self):
 
-        return f"{self.nome} está organizando o setor de {self.setor}."
+        return (
+            f"Sou {self.nome}, tenho {self.idade} anos "
+            f"e coordeno a área de {self.area_responsavel}."
+        )
 
 
     def __str__(self):
 
         return (
             f"{super().__str__()} | "
-            f"Setor: {self.setor} | "
-            f"Experiência: {self.tempo_experiencia} anos"
+            f"Área responsável: {self.area_responsavel}"
         )
